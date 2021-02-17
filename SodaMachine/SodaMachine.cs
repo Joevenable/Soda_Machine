@@ -94,9 +94,16 @@ namespace SodaMachine
         //Gets a soda from the inventory based on the name of the soda.
         private Can GetSodaFromInventory(string nameOfSoda)
         {
-
-
-            while (_inventory.Count)
+            foreach (Can can in _inventory)
+            {
+                if (can.Name == nameOfSoda)
+                {
+                    _inventory.Remove(can);
+                    return can;
+                }
+                
+            }
+            return null;
         }
 
         //This is the main method for calculating the result of the transaction.
@@ -108,7 +115,17 @@ namespace SodaMachine
         //If the payment does not meet the cost of the soda: despense payment back to the customer.
         private void CalculateTransaction(List<Coin> payment, Can chosenSoda, Customer customer)
         {
-           
+            double monies = TotalCoinValue(payment);
+            if (monies == chosenSoda.Price)
+            {
+                GetSodaFromInventory(chosenSoda.Name);
+            }
+            else if (monies > chosenSoda.Price)
+            {
+                GatherChange(monies - chosenSoda.Price);
+                GetSodaFromInventory(chosenSoda.Name);
+            }
+
         }
         //Takes in the value of the amount of change needed.
         //Attempts to gather all the required coins from the sodamachine's register to make change.
@@ -138,7 +155,13 @@ namespace SodaMachine
         //Takes in a list of coins to returnt he total value of the coins as a double.
         private double TotalCoinValue(List<Coin> payment)
         {
-           
+            double coinPayment = 0;
+            foreach (Coin coin in payment)
+            {
+                coinPayment = coinPayment + coin.Value;
+               
+            }
+            return coinPayment;
         }
         //Puts a list of coins into the soda machines register.
         private void DepositCoinsIntoRegister(List<Coin> coins)
