@@ -116,13 +116,17 @@ namespace SodaMachine
         private void CalculateTransaction(List<Coin> payment, Can chosenSoda, Customer customer)
         {
             double monies = TotalCoinValue(payment);
+
             if (monies == chosenSoda.Price)
             {
+                DepositCoinsIntoRegister();
                 GetSodaFromInventory(chosenSoda.Name);
+                
             }
             else if (monies > chosenSoda.Price)
             {
-                GatherChange(monies - chosenSoda.Price);
+                Coin change = DetermineChange(monies, chosenSoda.Price);
+                GatherChange(monies);
                 GetSodaFromInventory(chosenSoda.Name);
             }
 
@@ -139,18 +143,34 @@ namespace SodaMachine
         //If it does have one, return true.  Else, false.
         private bool RegisterHasCoin(string name)
         {
-           
+            foreach (Coin coin in _register)
+            {
+                if (_register.Count > 0)
+                {
+                    return true;
+                }
+            }
+            return false;   
         }
         //Reusable method to return a coin from the register.
         //Returns null if no coin can be found of that name.
         private Coin GetCoinFromRegister(string name)
         {
-            
+            foreach (Coin coin in _register)
+            {
+                if (coin.Name == name)
+                {
+                    _register.Remove(coin);
+                    return coin;
+                }
+           
+            }
+            return null;
         }
         //Takes in the total payment amount and the price of can to return the change amount.
         private double DetermineChange(double totalPayment, double canPrice)
         {
-            
+            return totalPayment - canPrice;
         }
         //Takes in a list of coins to returnt he total value of the coins as a double.
         private double TotalCoinValue(List<Coin> payment)
@@ -166,7 +186,10 @@ namespace SodaMachine
         //Puts a list of coins into the soda machines register.
         private void DepositCoinsIntoRegister(List<Coin> coins)
         {
-           
+            foreach  (Coin coin in coins)
+            {
+                _register.Add(coin);
+            }
         }
     }
 }
