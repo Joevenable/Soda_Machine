@@ -138,12 +138,12 @@ namespace SodaMachine
             {
                 //give them money back... payment *List of COins*
                 DepositCoinsIntoRegister(payment);
-                customer.AddCoinsIntoWallet(GatherChange(payment));
+                customer.AddCoinsIntoWallet(payment);
             }
             else if (monies <= chosenSoda.Price)
             {
                 DepositCoinsIntoRegister(payment);
-                customer.AddCoinsIntoWallet(GatherChange(payment));
+                customer.AddCoinsIntoWallet(payment);
             }
         }
         //Takes in the value of the amount of change needed.
