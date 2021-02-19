@@ -116,20 +116,35 @@ namespace SodaMachine
         private void CalculateTransaction(List<Coin> payment, Can chosenSoda, Customer customer)
         {
             double monies = TotalCoinValue(payment);
+            List<Coin> coins = new List<Coin>();
 
             if (monies == chosenSoda.Price)
             {
                 DepositCoinsIntoRegister(payment);
-                GetSodaFromInventory(chosenSoda.Name);
-                
-            }
-            else if (monies > chosenSoda.Price)
-            {
-                double change = DetermineChange(monies, chosenSoda.Price);
-                GatherChange(monies);
-                GetSodaFromInventory(chosenSoda.Name);
-            }
+                customer.AddCanToBackpack(GetSodaFromInventory(chosenSoda.Name));
+                //dispense soda 
 
+            }
+            else if (monies >= chosenSoda.Price && TotalCoinValue(_register)>= monies)
+            {
+                //deposit coins into register*payment
+                DepositCoinsIntoRegister(payment);
+                double change = DetermineChange(monies, chosenSoda.Price);
+                customer.AddCoinsIntoWallet(GatherChange(change));
+                _inventory.Remove(chosenSoda);
+                customer.AddCanToBackpack(GetSodaFromInventory(chosenSoda.Name));
+            }
+            else if (monies > chosenSoda.Price && TotalCoinValue(_register) < monies)
+            {
+                //give them money back... payment *List of COins*
+                DepositCoinsIntoRegister(payment);
+                customer.AddCoinsIntoWallet(GatherChange(payment));
+            }
+            else if (monies <= chosenSoda.Price)
+            {
+                DepositCoinsIntoRegister(payment);
+                customer.AddCoinsIntoWallet(GatherChange(payment));
+            }
         }
         //Takes in the value of the amount of change needed.
         //Attempts to gather all the required coins from the sodamachine's register to make change.
@@ -137,20 +152,51 @@ namespace SodaMachine
         //If the change cannot be made, return null.
         private List<Coin> GatherChange(double changeValue)
         {
-
             List<Coin> coins = new List<Coin>();
-            double changeDue = 0;
-            while (changeValue < changeDue)
-            {
-                string validSelection = UserInterface.CoinSelection(changeValue, changeDue);
-                if (validSelection == "done")
-                {
-                    return coins;
-                }
-                Coin coinName = GetCoinFromRegister(validSelection);
-                coins.Add(coinName);
+            Quarter quarter = new Quarter();
+            Dime dime = new Dime();
+            Nickel nickel = new Nickel();
+            Penny penny = new Penny();
+            
 
+            while(changeValue >= 0.25)
+            {
+                if (RegisterHasCoin("Quarter"))
+                {
+                    _register.Remove(quarter);
+                    coins.Add(quarter);
+                    changeValue = changeValue - quarter.Value;
+                }
             }
+            while (changeValue >= 0.10)
+            {
+                if (RegisterHasCoin("Quarter"))
+                {
+                    _register.Remove(quarter);
+                    coins.Add(quarter);
+                    changeValue = changeValue - quarter.Value;
+                }
+            }
+            while (changeValue >= 0.05)
+            {
+                if (RegisterHasCoin("Quarter"))
+                {
+                    _register.Remove(quarter);
+                    coins.Add(quarter);
+                    changeValue = changeValue - quarter.Value;
+                }
+            }
+            while (changeValue >= 0.01)
+            {
+                if (RegisterHasCoin("Quarter"))
+                {
+                    _register.Remove(quarter);
+                    coins.Add(quarter);
+                    changeValue = changeValue - quarter.Value;
+                }
+            }
+            return coins;
+            //return list of coins coins
         }
         //Reusable method to check if the register has a coin of that name.
         //If it does have one, return true.  Else, false.
