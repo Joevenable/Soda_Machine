@@ -126,7 +126,7 @@ namespace SodaMachine
                 //dispense soda 
 
             }
-            else if (monies >= chosenSoda.Price && TotalCoinValue(_register)>= monies)
+            if (monies >= chosenSoda.Price && TotalCoinValue(_register)>= monies)
             {
                 //deposit coins into register*payment
                 DepositCoinsIntoRegister(payment);
@@ -135,13 +135,13 @@ namespace SodaMachine
                 _inventory.Remove(chosenSoda);
                 customer.AddCanToBackpack(GetSodaFromInventory(chosenSoda.Name));
             }
-            else if (monies > chosenSoda.Price && TotalCoinValue(_register) < monies)
+            if (monies > chosenSoda.Price && TotalCoinValue(_register) < monies)
             {
                 //give them money back... payment *List of COins*
                 DepositCoinsIntoRegister(payment);
                 customer.AddCoinsIntoWallet(payment);
             }
-            else if (monies <= chosenSoda.Price)
+            if (monies <= chosenSoda.Price)
             {
                 DepositCoinsIntoRegister(payment);
                 customer.AddCoinsIntoWallet(payment);
@@ -171,29 +171,29 @@ namespace SodaMachine
             }
             while (changeValue >= 0.10)
             {
-                if (RegisterHasCoin("Quarter"))
+                if (RegisterHasCoin("Dime"))
                 {
-                    _register.Remove(quarter);
-                    coins.Add(quarter);
-                    changeValue = changeValue - quarter.Value;
+                    _register.Remove(dime);
+                    coins.Add(dime);
+                    changeValue = changeValue - dime.Value;
                 }
             }
             while (changeValue >= 0.05)
             {
-                if (RegisterHasCoin("Quarter"))
+                if (RegisterHasCoin("Nickel"))
                 {
-                    _register.Remove(quarter);
-                    coins.Add(quarter);
-                    changeValue = changeValue - quarter.Value;
+                    _register.Remove(nickel);
+                    coins.Add(nickel);
+                    changeValue = changeValue - nickel.Value;
                 }
             }
             while (changeValue >= 0.01)
             {
-                if (RegisterHasCoin("Quarter"))
+                if (RegisterHasCoin("Penny"))
                 {
-                    _register.Remove(quarter);
-                    coins.Add(quarter);
-                    changeValue = changeValue - quarter.Value;
+                    _register.Remove(penny);
+                    coins.Add(penny);
+                    changeValue = changeValue - penny.Value;
                 }
             }
             return coins;
