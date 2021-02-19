@@ -119,13 +119,13 @@ namespace SodaMachine
 
             if (monies == chosenSoda.Price)
             {
-                DepositCoinsIntoRegister();
+                DepositCoinsIntoRegister(payment);
                 GetSodaFromInventory(chosenSoda.Name);
                 
             }
             else if (monies > chosenSoda.Price)
             {
-                Coin change = DetermineChange(monies, chosenSoda.Price);
+                double change = DetermineChange(monies, chosenSoda.Price);
                 GatherChange(monies);
                 GetSodaFromInventory(chosenSoda.Name);
             }
@@ -137,7 +137,20 @@ namespace SodaMachine
         //If the change cannot be made, return null.
         private List<Coin> GatherChange(double changeValue)
         {
-            
+
+            List<Coin> coins = new List<Coin>();
+            double changeDue = 0;
+            while (changeValue < changeDue)
+            {
+                string validSelection = UserInterface.CoinSelection(changeValue, changeDue);
+                if (validSelection == "done")
+                {
+                    return coins;
+                }
+                Coin coinName = GetCoinFromRegister(validSelection);
+                coins.Add(coinName);
+
+            }
         }
         //Reusable method to check if the register has a coin of that name.
         //If it does have one, return true.  Else, false.
